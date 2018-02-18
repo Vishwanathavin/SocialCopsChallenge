@@ -4,10 +4,13 @@ What we expect to have: Various commodities, its price, quantity of arrival, Dif
 
 Objective:
 	1. Filter outliers: 
+		Reading 1:
 		How: Either we can plot or think of some other technique to do the same
 		What to plot and how. 
 		One solution is using standard deviation techniques. Read about it: 
 		This has to be applied on the monthly file
+
+
 
 	2. Understand price fluctuations accounting seasonal effect for EACH CLUSTER and COMMODITY (is it month wise or what wise)
 		How: We need to calculate the multiplicative seasonal index for each commodity and the cluster 

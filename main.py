@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Minimum support price
-basePrice = pd.read_csv('CMO_MSP_Mandi.csv')
+basePrice = pd.read_csv('./data/CMO_MSP_Mandi.csv')
 
 print "Number of unique commodities for which base proce is available"
 print basePrice['commodity'].unique().shape
@@ -13,7 +13,7 @@ print basePrice['Type'].unique().shape
 
 # APMC price
 
-APMCprice =  pd.read_csv('Monthly_data_cmo.csv')
+APMCprice =  pd.read_csv('./data/Monthly_data_cmo.csv')
 
 # Treat the data
 # Convert datatime to the format
@@ -32,12 +32,20 @@ def movingaverage(interval, window_size, STD):
     # print newVal
     # print (STD*np.std(newVal))
     return newVal+(STD*np.std(newVal))
+uniqueAPMC=['Ahmednagar']
+uniqueCommodity=['Bajri']
+
+#Think through this method
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 for APMC in uniqueAPMC:
     for commodity in uniqueCommodity:
         specificData = APMCprice[(APMCprice['Commodity']==commodity) & (APMCprice['APMC']==APMC)]
         specificData = specificData[specificData['modal_price'] < movingaverage(specificData['modal_price'],3,2)]
-        
+
+
+# Seasonality index
+# https://machinelearningmastery.com/decompose-time-series-data-trend-seasonality/
 exit()
 # Assign X and Y values
 # Filter outliers
