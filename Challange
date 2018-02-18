@@ -1,0 +1,59 @@
+Aim: To understand trends in APMC price & quantity arrival data for different commodities in Maharashtra.
+
+What we expect to have: Various commodities, its price, quantity of arrival, Different location
+
+Objective:
+	1. Filter outliers: 
+		How: Either we can plot or think of some other technique to do the same
+		What to plot and how. 
+		One solution is using standard deviation techniques. Read about it: 
+		This has to be applied on the monthly file
+
+	2. Understand price fluctuations accounting seasonal effect for EACH CLUSTER and COMMODITY (is it month wise or what wise)
+		How: We need to calculate the multiplicative seasonal index for each commodity and the cluster 
+			 We need to think of how to cluster them . On what basis
+
+
+	3. Adjust the prices after multiplying by the index
+	How: read about how to adjust the prices on using mutiplicative index
+
+
+	4. Compare prices with Minimum support price
+	 Question: Should we deseasonalize this too? Find out how?
+	 How: to compare the prices. Just a difference would suffice?
+
+	5. Flag set of APMC/mandis and commodities with highest price fluctuation across different commodities in each relevant season, and year.
+	How: Find the ones that very different than the market price. Do it for each commodity for each season for each year. 
+
+	What are we achieving by that: 
+
+
+	What data do we have
+	
+
+	Steps to do:
+
+	Filter outliers
+		Take the APMC file and for each commodity, for each APMC get the outlier across the various seasons
+		Read: how to filter outliers. Use the average value they used
+
+	Get the fluctuations
+		Read: How to plot the trends, should we do a fitting of some sort
+
+	Normalize the data:
+		Use multiplicative indices to normalize the data
+
+		Do it for MSP too
+
+	Difference:
+
+		Items that have a 
+
+
+
+Productising:
+
+A website where we can give filter to find how much fluctuation is happening 
+
+
+
