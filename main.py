@@ -37,12 +37,40 @@ uniqueCommodity=['Bajri']
 
 #Think through this method
 from statsmodels.tsa.seasonal import seasonal_decompose
-
+import matplotlib.pyplot as plt
 for APMC in uniqueAPMC:
     for commodity in uniqueCommodity:
+        print APMC,commodity
         specificData = APMCprice[(APMCprice['Commodity']==commodity) & (APMCprice['APMC']==APMC)]
-        specificData = specificData[specificData['modal_price'] < movingaverage(specificData['modal_price'],3,2)]
 
+        # Sorting the values in a linear time line
+        Xvalue = specificData['date']
+        Yvalue = specificData['modal_price']
+
+        outTuple = [y for x, y in sorted(zip(Xvalue, Yvalue))]
+        Xvalue = sorted(Xvalue)
+
+        Yvalue = [Yval for Yval in outTuple]
+
+        # specificData = specificData[specificData['modal_price'] < movingaverage(specificData['modal_price'],3,2)]
+
+        # Outliers detection
+        # YvalueAvg = movingaverage(Yvalue, 3,2)
+        #
+        #
+        # Xnew= []
+        # Ynew= []
+        #
+        # for ii in range(len(Xvalue)):
+        #     if Yvalue[ii] < YvalueAvg[ii]:
+        #         Xnew.append((Xvalue[ii]))
+        #         Ynew.append((Yvalue[ii]))
+
+
+        # Getting seasonal decomposition
+        result = seasonal_decompose(list(Yvalue),model='multiplicative',freq=4)
+        result.plot()
+        plt.show()
 
 # Seasonality index
 # https://machinelearningmastery.com/decompose-time-series-data-trend-seasonality/
