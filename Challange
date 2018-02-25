@@ -10,6 +10,8 @@ Objective:
 		One solution is using standard deviation techniques. Read about it: 
 		This has to be applied on the monthly file
 
+		How can I remove outliers when I realize that they contribute to the fluctutation: So, outlier should be interms of the date and not the price
+
 
 
 	2. Understand price fluctuations accounting seasonal effect for EACH CLUSTER and COMMODITY (is it month wise or what wise)
@@ -57,6 +59,29 @@ Objective:
 Productising:
 
 A website where we can give filter to find how much fluctuation is happening 
+
+
+
+
+New version of understanding
+
+1. Testing and filtering outliers
+	Not the prices  you dumbo. It is the dates. Prices are needed to detect the fluctutations
+	Get the dates in a sequence
+
+2. De-seasonalizing: Find out the value of the freq and the filter to be used
+	Use the code and multiply the resid and the trend. This will give the fluctuation
+	For the given data: Detect the seasons and multiply by those many values : 
+	De seasonalize even the max and min prices
+
+3. After de seasonalizing compare with the base price and flag the APMC that are selling at very high price
+   
+   However benefit of doubt to be given to them by comparing the quantity of arrival to see if volume is a reason for high prices
+   
+
+4. Getting the fluctuation
+	Get a list of the values that see a huge drop from the previous value
+
 
 
 
