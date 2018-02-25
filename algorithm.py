@@ -86,6 +86,8 @@ def main():
     APMCdata = cAPMC(pd.read_csv('./data/Monthly_data_cmo.csv'))
     MSPdata = cMSP(pd.read_csv('./data/CMO_MSP_Mandi.csv'))
 
+    flucData=pd.DataFrame()
+
     for APMC in APMCdata.uniqueAPMC:
         for commodity in APMCdata.uniqueCommodity:
 
@@ -122,15 +124,18 @@ def main():
 
             #Find the difference with the MSP and store the fluctuation
             APMCdata.curData['fluctuation']=APMCdata.curData['deSeasonalized']-MSPdata.curData['msprice']
+            print(APMCdata.curData)
+            print(APMCdata.curData.reset_index(level=0, inplace=True))
+            # flucData=flucData.append(APMCdata.curData.reset_index(level=0, inplace=True))
             # print(APMCdata.curData['fluctuation'])
 
-            APMCdata.plotcurData('fluctuation')
+            # APMCdata.plotcurData('fluctuation')
             # APMCdata.plotcurData('modal_price')
-            APMCdata.plotcurData('deSeasonalized')
-            MSPdata.plotcurData('msprice')
-            plt.show()
-
-
+            # APMCdata.plotcurData('deSeasonalized')
+            # MSPdata.plotcurData('msprice')
+            # plt.show()
+            # Interpolate
+            exit()
     # Find the set of APMC and the commodity with the maximum fluctuation
     # DOnt expand the scope
 
