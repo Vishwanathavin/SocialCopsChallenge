@@ -8,14 +8,26 @@ stdMul = 2
 class cAPMC:
     def __init__(self,data):
         self.data=data
-        self.treatData()
         self.uniqueAPMC = self.data['APMC'].unique()
         self.uniqueCommodity = self.data['Commodity'].unique()
+        self.treatData()
+        self.data.set_index('date', inplace=True)
+        # self.data.set_index(['APMC','Commodity','date'], inplace=True)
+        # self.fillMissing()
+
+    def fillMissing(self):
+        interData = self.curData.resample('W').asfreq()
+        self.curData = pd.concat([self.curData, interData]).sort_index().interpolate('time')
+        self.curData = self.curData[~self.curData.index.duplicated(keep='first')]
 
     def treatData(self):
         self.data['date'] = pd.to_datetime(self.data['date'], format="%Y-%m")
         self.data.Commodity = self.data.Commodity.astype(str).apply(lambda x: x.upper())
         self.data.APMC = self.data.APMC.astype(str).apply(lambda x: x.upper())
+
+    def sliceData(self,columns):
+        # self.slicedData=self.data[self.data.index.levels[1].isin(list(columns))]
+        self.slicedData = self.data.iloc[self.data.index.get_level_values('Commodity').isin(columns)]
 
     def setCurrent(self,APMC,commodity):
         self.curData = self.data[(self.data['Commodity'] == commodity) & (self.data['APMC'] == APMC)]
@@ -25,6 +37,7 @@ class cAPMC:
     def interpolateData(self):
         interData = self.curData.resample('W').asfreq()
         self.curData = pd.concat([self.curData, interData]).sort_index().interpolate('time')
+        self.curData = self.curData[~self.curData.index.duplicated(keep='first')]
 
     def removeOutlier(self):
         self.curData = self.curData[~((self.curData['modal_price'] - self.curData['modal_price'].mean()).abs() > stdMul * self.curData['modal_price'].std())]
@@ -37,6 +50,7 @@ class cMSP:
     def __init__(self,data):
         self.data=data
         self.treatData()
+        self.data.set_index(['commodity', 'year'], inplace=True)
 
     def treatData(self):
         self.data['year'] = pd.to_datetime(self.data['year'], format="%Y")
@@ -52,7 +66,7 @@ class cMSP:
 
     def extrapolateData(self,APMCindex):
 
-        interData=self.curData.reindex(pd.date_range(start=self.curData.index.min(), end=APMCindex.max(), freq='w'))
+        interData=self.curData.reindex(pd.date_range(start=self.curData.index.min(), end=APMCindex.max(), freq='W'))
 
         # self.curData = pd.concat([self.curData, interData]).interpolate(method='spline', order=2)
         self.curData = pd.concat([self.curData, interData]).sort_index()
@@ -86,46 +100,69 @@ def main():
     APMCdata = cAPMC(pd.read_csv('./data/Monthly_data_cmo.csv'))
     MSPdata = cMSP(pd.read_csv('./data/CMO_MSP_Mandi.csv'))
 
+    #Slice Data
+    APMCdata.sliceData(MSPdata.data.index.levels[0].unique())
+    for APMC in APMCdata.data.index.levels[0]:
+        for commodity in APMCdata.data.index.levels[1]:
+            for date in APMCdata.data.index.levels[2]:
+                print APMC, commodity, date
+                print APMCdata.data.loc[[APMC, commodity, date]]['modal_price']
+            exit()
+    exit()
     flucData=pd.DataFrame()
 
     for APMC in APMCdata.uniqueAPMC:
+    # for APMC in ['RAHURI']:
         for commodity in APMCdata.uniqueCommodity:
-
+        # for commodity in ['PIGEON PEA (TUR)']:
+            print APMC,commodity
             #set the current sliced data
             APMCdata.setCurrent(APMC,commodity)
             MSPdata.setCurrent(commodity)
-            #remove outliers
-            APMCdata.removeOutlier()
+
+            if MSPdata.curData.shape[0] & APMCdata.curData.shape[0]:
+
+                #remove outliers
+                APMCdata.removeOutlier()
 
 
 
-            # Interpolate the data so that there is a data for every month
-            APMCdata.interpolateData()
-            #Get the Extrapolated MSP data for all the years.
-            MSPdata.extrapolateData(APMCdata.curData.index)
-            #Deflate the APMC data
-            # WE dont need to do this step since we are using a relative comparison
+                # Interpolate the data so that there is a data for every month
+                APMCdata.interpolateData()
+                #Get the Extrapolated MSP data for all the years.
+                MSPdata.extrapolateData(APMCdata.curData.index)
+                #Deflate the APMC data
+                # WE dont need to do this step since we are using a relative comparison
 
 
-            #Use seasonal decompose both additive and multiplicative. Find out whichever suits
+                #Use seasonal decompose both additive and multiplicative. Find out whichever suits
 
-            # for diff in [30]:
-            #     data= APMCdata.curData['modal_price']-APMCdata.curData['modal_price'].shift(diff)
-            #
-            #     test_stationarity(data,30)
-
-            decompData = seasonal.seasonal_decompose(APMCdata.curData['modal_price'],model='multiplicative', freq=15)
-
-            # decompData.plot()
-
-            # Multiply the trend and residue to get the de-seasonalized value
-            APMCdata.curData['deSeasonalized']= decompData.resid*decompData.trend
+                # for diff in [30]:
+                #     data= APMCdata.curData['modal_price']-APMCdata.curData['modal_price'].shift(diff)
+                #
+                #     test_stationarity(data,30)
 
 
-            #Find the difference with the MSP and store the fluctuation
-            APMCdata.curData['fluctuation']=APMCdata.curData['deSeasonalized']-MSPdata.curData['msprice']
-            print(APMCdata.curData)
-            print(APMCdata.curData.reset_index(level=0, inplace=True))
+
+                try:
+                    decompData = seasonal.seasonal_decompose(APMCdata.curData['modal_price'],model='multiplicative', freq=15)
+
+
+                    # Multiply the trend and residue to get the de-seasonalized value
+                    APMCdata.curData['deSeasonalized']= decompData.resid*decompData.trend
+                    # print APMCdata.curData['deSeasonalized']
+                    # print MSPdata.curData['msprice']
+
+                    #Find the difference with the MSP and store the fluctuation
+                    APMCdata.curData['fluctuation']=APMCdata.curData['deSeasonalized']-MSPdata.curData['msprice']
+
+                    flucData=flucData.append(APMCdata.curData[['fluctuation']+['deSeasonalized']])
+                    flucData['APMC']=APMC
+                    flucData['Commodity']=commodity
+                except:
+                    pass
+
+
             # flucData=flucData.append(APMCdata.curData.reset_index(level=0, inplace=True))
             # print(APMCdata.curData['fluctuation'])
 
@@ -135,8 +172,11 @@ def main():
             # MSPdata.plotcurData('msprice')
             # plt.show()
             # Interpolate
-            exit()
+    flucData = flucData.groupby(pd.TimeGrouper(freq='M')).agg('mean')
+    flucData.to_csv('./data/fluctuationData.csv',index=False)
+
     # Find the set of APMC and the commodity with the maximum fluctuation
+
     # DOnt expand the scope
 
 if __name__=="__main__":
