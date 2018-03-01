@@ -1,0 +1,50 @@
+{
+  "collections":[
+    {
+              "APMCdata":[
+                {
+                  "Name":"APMCName",
+                  "district":"districtName",
+                  "state":"stateName",
+                  "commodity":[
+                    {
+                      "Name":"commodityName1",
+                      "details":[
+                        {
+                          "date":"date",
+                          "modal_price":"modal_price",
+                          "max_price":"max_price",
+                          "min_price":"min_price",
+                          "quantity":"quantity"
+                        },
+                        {
+                          "date":"date",
+                          "modal_price":"modal_price",
+                          "max_price":"max_price",
+                          "min_price":"min_price",
+                          "quantity":"quantity"
+
+                        }
+
+                      ]
+                    }
+                  ]
+                }
+            ]
+    },
+    {
+      "MSPdata":[
+        {
+          "commodity":"commodityName",
+          "cropType":"croptype",
+          "details":[
+            {
+              "year":"year",
+              "price":"msprice"
+            }
+          ]
+        }
+      ]
+    }
+          ]
+}
