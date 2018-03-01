@@ -1,6 +1,6 @@
 from flask import Flask,g,jsonify,request
 from flask_pymongo import PyMongo
-
+from algorithm import stationarity
 app = Flask(__name__)
 
 
@@ -21,7 +21,7 @@ def index():
 
 
 @app.route('/actualPrices/<APMC>/<COMMODITY>',methods=['GET'])
-def stationaryPrices(APMC,COMMODITY):
+def actualPrices(APMC,COMMODITY):
     salesDetails = g.db.APMC.find_one({"$and":[{"Name":APMC},{"commodityList":{"$elemMatch":{"Name":COMMODITY}}}]},{"commodityList.$":1})
 
     return jsonify({"Details": salesDetails})
@@ -29,8 +29,13 @@ def stationaryPrices(APMC,COMMODITY):
 @app.route('/stationaryPrices/<APMC>/<COMMODITY>',methods=['GET'])
 def stationaryPrices(APMC,COMMODITY):
     salesDetails = g.db.APMC.find_one({"$and":[{"Name":APMC},{"commodityList":{"$elemMatch":{"Name":COMMODITY}}}]},{"commodityList.$":1})
+    # print (salesDetails["commodityList"])
+    # print (salesDetails["commodityList"][0]["salesList"])
+    stationaryData = stationarity(salesDetails["commodityList"][0]["salesList"])
 
-    return jsonify({"Details": salesDetails})
+    return jsonify({"stationaryData": stationaryData})
+
+
 
 
 if __name__=='__main__':

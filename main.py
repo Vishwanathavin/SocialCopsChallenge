@@ -10,9 +10,9 @@ def main():
     dB = dataBase('socialCops')
 
 
-    # APMCdata.groupData()
-    #
-    # dB.updateDB("APMC",APMCdata.groupList)
+    APMCdata.groupData()
+
+    dB.updateDB("APMC",APMCdata.groupList)
 
     MSPdata.groupData()
 
