@@ -1,19 +1,32 @@
 import pandas as pd
 from dataClass import cAPMC,removeOutlier,interpolateData
-from statsmodels.tsa import seasonal, stattools
+from statsmodels.tsa import seasonal
 
 def main():
-    APMCdata = cAPMC(pd.read_csv('./data/Monthly_data_cmo.csv'))
 
+    APMCdata=readInput()
     APMCdata.groupData()
-
-    flucData = pd.DataFrame()
-    for data in APMCdata.groupList:
-        data = stationarity(data)
-        flucData = pd.concat([flucData,data[['fluc'] + ['APMC'] + ['Commodity']]], axis=0)
-
+    flucData = getFluctuation(APMCdata.groupList)
     flucData=flucData.reset_index()
     flucData.to_csv('./data/flucData.csv',index=False)
+def readInput():
+    APMCdata = cAPMC(pd.read_csv('./data/Monthly_data_cmo.csv'))
+    return APMCdata
+def getFluctuation(groupList):
+
+    flucData = pd.DataFrame()
+    for APMCdata in groupList:
+        for commodityData in APMCdata['commodityList']:
+            data = stationarity(commodityData['salesList'])
+            try:
+                data['fluc']=data['deSeasonalized'].diff()
+                data['Commodity']=commodityData['Name']
+                data['APMC']=APMCdata['Name']
+                flucData = pd.concat([flucData, data[['date']+['fluc'] + ['APMC'] + ['Commodity']]], axis=0)
+            except:
+                continue
+    return flucData
+
 
 def stationarity(data):
     data=pd.DataFrame(data)
@@ -26,8 +39,8 @@ def stationarity(data):
         # Multiply the trend and residue to get the de-seasonalized value
         data['deSeasonalized'] = decompData.resid * decompData.trend
         data['fluc'] = data['deSeasonalized'].diff()
+        data.reset_index(inplace=True)
 
-        data=data.to_dict('records')
         return data
         # flucData = pd.concat([flucData, APMCdata.curData[['fluc'] + ['APMC'] + ['Commodity']]], axis=0)
     except:
