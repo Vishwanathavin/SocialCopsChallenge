@@ -3,23 +3,35 @@ INput data details:
 
 
 Methodology:
-	Compartmentalization of data based on indices
 
-	Removing the outlier from the data set: Explain the inten behind the removal. Why it might be a costly mistake to remove the data . Explain the rationale behind the standard deviation and why it might have to be decided after carefule scrutiny
+	Genral paragraph about the list of steps that are being done.
 
-	Interpolation of data: Weekwise. Linear interpolation
-		Intention: Will help us fill the missing and easier to find patterns
+	Since the required output is on the basis of individual groups, we first compartmentalize the data into groups.
 
-	Extrapolation of MSP
-		Intention. Will help us find the fluctuation for years where it is not available
+	This is in the form of APMC and then commodity wise clustering. For each APMC and the cluster, we then sort the data date wise and process each such cluster further.
+
+	Similarly, we also cluster the MSP data commodity wise and then sort the prices year wise.
+
+	Outlier removal
+	As the next step, we remove the outliers that have a huge fluctuation.This removal has to be done carefully since it conflicts with out interest of finding the fluctuation.
+	Hence, we dont want to be removing the value that has a fluctuation as something taht is an outlier. However, in the current context, we remove outlier citing some mis-computing or human error in collecting the data.
+
+	For outlier removal , we are using a standard deviation of 2 for removal. This value can be iterated upon and fixed at a particular value so that
+
+    Filling missing data by interpolation and Extrapolation:
+    Monthwise, linear interpolation for the monthly data abd a splie interpolation for the MSP data
+    The need for this step is because we want to be able to compare the missing values easily.
+    We are using an existing package for the removal of the same
 
 
 	Deflation: Not performed since we are interested in computing the differnce between two entities that are equally affected as a result of inflation. 
 
 	Removing seasonality:
-		Assuming a monthly seasonal cycle. Used the python package seasonal_decompose to separate the noise, trend and seasonality
 
-	out of scope:
+	    What is done:
+		    Assuming a 4   month seasonal cycle. Used the python package seasonal_decompose to separate the noise, trend and seasonality
+
+        What is out of scope:
 		Finding the ideal seasonal value by iterating on the frequency of the cycle and cheking the auto correlation factor to make sure the residual noise is entirely random. Owing to time constaint, this was not implemented.
 
 	Calculating the fluctuation for each time index: 
@@ -31,7 +43,9 @@ Methodology:
 
 	Do a kick ass graph which explains it all
 
+Future scope:
 
+Get a mapping of the volume and distance based analysis of the various APMC's
 
 
 

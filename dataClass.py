@@ -15,6 +15,8 @@ class cAPMC:
         self.data.APMC = self.data.APMC.astype(str).apply(lambda x: x.upper())
 
     def groupData(self):
+        print()
+        print("Grouping the APMC data")
         self.groupList=[]
         for idone, APMC in self.data.groupby('APMC'):
             APMCdetails = {"Name": idone, "commodityList": []}
@@ -40,7 +42,16 @@ def interpolateData(data):
     data = data.groupby(pd.Grouper(freq='M')).agg({'modal_price': 'mean'})
     return data
 
+def extrapolateData(data,APMCindex):
 
+    print(data.index)
+    print(APMCindex)
+    interData = data.reindex(pd.date_range(start=data.index.min(), end=APMCindex.max(), freq='W'))
+    data = pd.concat([data, interData]).sort_index().interpolate('time')
+    data = data[~data.index.duplicated(keep='first')]
+    data = data.groupby(pd.Grouper(freq='M')).agg({'price': 'mean'})
+
+    return data
 
 class cMSP:
     def __init__(self, data):
@@ -56,6 +67,8 @@ class cMSP:
         self.data.commodity = self.data.commodity.astype(str).apply(lambda x: x.upper())
 
     def groupData(self):
+        print()
+        print("Grouping the MSP data")
         self.groupList=[]
 
         for idone, commodity in self.data.groupby('commodity'):
