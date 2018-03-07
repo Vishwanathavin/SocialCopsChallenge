@@ -60,7 +60,38 @@ def stationarity(data,mspdata=None):
         # flucData = pd.concat([flucData, APMCdata.curData[['fluc'] + ['APMC'] + ['Commodity']]], axis=0)
     except:
         pass
+def analysis():
+    inpFile = pd.read_csv('./data/flucData.csv')
+    # inpFile.set_index(['APMC', 'Commodity', 'date'], inplace=True)
+    # for idone, APMC in inpFile.groupby('APMC'):
+    #     APMCdetails = {"Name": idone, "commodityList": []}
+    #
+    #     for idtwo, commodity in APMC.groupby('Commodity'):
+    #         commoditydetails = {"Name": idtwo, "salesList": []}
+    #         for idthree, date in commodity.groupby('date'):
+    #             dateDetails = {"date": idthree, "modal_price": float(date['modal_price'].values[0])}
+    #             commoditydetails['salesList'].append(dateDetails)
+    #         APMCdetails["commodityList"].append(commoditydetails)
+    #
+    flucData=pd.DataFrame()
+    diffData=pd.DataFrame()
+    for APMC in list(inpFile['APMC'].unique())[2:3]:
+        print(APMC)
+        APMCData=inpFile[(inpFile['APMC']==APMC)]
+        # print(APMCData.shape)
+        for commodity in list(APMCData['Commodity'].unique()):
+            print(commodity)
+            commodityData = APMCData[APMCData['Commodity']==commodity]
+            print (commodityData['fluc'].max(),commodityData['fluc'].argmax())
 
+            # flucData=flucData.append(pd.Series([slicedData['fluc'].max(),slicedData['fluc'].argmax()],index=[''])
+            # print(APMC,commodity)
 
+            # slicedData['MaxFluc']=slicedData['fluc'].max()
+            # inpFile=pd.concat([inpFile,slicedData],axis=0)
+    #
+    # inpFile.set_index(['APMC', 'Commodity', 'date'], inplace=True)
+    # print(inpFile.sort_values('MaxFluc',ascending=False)['MaxFluc'].unique())
 if __name__=='__main__':
-    main()
+    # main()
+    analysis()

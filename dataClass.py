@@ -44,8 +44,8 @@ def interpolateData(data):
 
 def extrapolateData(data,APMCindex):
 
-    print(data.index)
-    print(APMCindex)
+    # print(data.index)
+    # print(APMCindex)
     interData = data.reindex(pd.date_range(start=data.index.min(), end=APMCindex.max(), freq='W'))
     data = pd.concat([data, interData]).sort_index().interpolate('time')
     data = data[~data.index.duplicated(keep='first')]
