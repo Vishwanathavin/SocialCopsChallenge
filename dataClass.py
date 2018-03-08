@@ -37,9 +37,10 @@ def removeOutlier(data):
 
 def interpolateData(data):
     interData = data.resample('W').asfreq()
-    data = pd.concat([data, interData]).sort_index().interpolate('time')
+    data = pd.concat([data, interData]).sort_index()
     data = data[~data.index.duplicated(keep='first')]
-    data = data.groupby(pd.Grouper(freq='M')).agg({'modal_price': 'mean'})
+    data=data.interpolate('time')
+    # data = data.groupby(pd.Grouper(freq='M')).agg({'modal_price': 'mean'})
     return data
 
 def extrapolateData(data,APMCindex):
@@ -47,9 +48,10 @@ def extrapolateData(data,APMCindex):
     # print(data.index)
     # print(APMCindex)
     interData = data.reindex(pd.date_range(start=data.index.min(), end=APMCindex.max(), freq='W'))
-    data = pd.concat([data, interData]).sort_index().interpolate('time')
+    data = pd.concat([data, interData]).sort_index()
     data = data[~data.index.duplicated(keep='first')]
-    data = data.groupby(pd.Grouper(freq='M')).agg({'price': 'mean'})
+    data = data.interpolate(method='spline', order=2)
+    # data = data.groupby(pd.Grouper(freq='M')).agg({'price': 'mean'})
 
     return data
 

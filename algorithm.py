@@ -93,5 +93,5 @@ def analysis():
     # inpFile.set_index(['APMC', 'Commodity', 'date'], inplace=True)
     # print(inpFile.sort_values('MaxFluc',ascending=False)['MaxFluc'].unique())
 if __name__=='__main__':
-    # main()
-    analysis()
+    main()
+    # analysis()
